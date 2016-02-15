@@ -50,10 +50,7 @@ func RegisterMachine(name string, id string, pid int, root_directory string) err
 	if service == "" {
 		service = "runc"
 	}
-	/*	return obj.Call("org.freedesktop.machine1.Manager.RegisterMachine", 0, name[0:32], av, service, "container", uint32(pid), root_directory).Err
-	 */
-	return obj.Call("org.freedesktop.machine1.Manager.RegisterMachine", 0, name[0:32], av, service, "container", uint32(pid), "/").Err
-	return nil
+	return obj.Call("org.freedesktop.machine1.Manager.RegisterMachine", 0, name[0:32], av, service, "container", uint32(pid), root_directory).Err
 }
 
 // TerminateMachine registered with systemd on the host system
