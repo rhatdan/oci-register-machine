@@ -1,5 +1,5 @@
 %if 0%{?fedora}
-%global with_devel 1
+%global with_devel 0
 %global with_bundled 0
 %global with_debug 1
 %global with_check 1
