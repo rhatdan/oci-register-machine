@@ -7,9 +7,9 @@
 #   install: Install docs, install binary to specified location
 #   clean: Clean up.
 
-.PHONY:  build install clean all docs
+.PHONY:  build install clean all docs dist
 
-all: build docs
+all: build docs dist
 
 PREFIX ?= $(DESTDIR)/usr
 HOOKSDIR=/usr/lib/docker/hooks.d
@@ -30,6 +30,13 @@ oci-register-machine.1: oci-register-machine.1.md
 
 docs: oci-register-machine.1
 build: oci-register-machine
+
+dist: oci-register-machine.spec 
+	spectool -g oci-register-machine.spec
+
+rpm: dist
+	rpmbuild --define "_sourcedir `pwd`" --define "_specdir `pwd`" \
+	--define "_rpmdir `pwd`" --define "_srcrpmdir `pwd`" -ba oci-register-machine.spec 
 
 # Install code (change here to place anywhere you want)
 #
