@@ -12,7 +12,7 @@
 all: build docs
 
 PREFIX ?= $(DESTDIR)/usr
-HOOKSDIR=/usr/lib/docker/hooks.d
+HOOKSDIR=/usr/libexec/oci/hooks.d
 HOOKSINSTALLDIR=$(DESTDIR)$(HOOKSDIR)
 # need this substitution to get build ID note
 GOBUILD=go build -a -ldflags "${LDFLAGS:-} -B 0x$(shell head -c20 /dev/urandom|od -An -tx1|tr -d ' \n')"
