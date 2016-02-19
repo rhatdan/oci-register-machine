@@ -40,4 +40,4 @@ MACHINE                          CLASS     SERVICE
 docker-run(1), machinectl(1), systemd-machined(8)
 
 ## HISTORY
-November 2015, updated by Sally OMalley <somalley@redhat.com>
+November 2015, updated by Sally O'Malley <somalley@redhat.com>

@@ -18,10 +18,10 @@ These and other methods are described here:
 
 
 Running Docker containers with this executable, RegisterMachine() is called
-iust before a container is started and after it is provisioned.
+just before a container is started and after it is provisioned.
 All running containers' IDs will be listed when you run the command `machinectl` or `machinectl list`.
 When containers are stopped/exited, TerminateMachine() is called, all container processes are terminated
-and container ID is no longer listed in `machinectl` output.
+and the container ID is no longer listed in `machinectl` output.
 
 
 This doc assumes you are running at least docker version 1.9 with the dockerhooks patch.
