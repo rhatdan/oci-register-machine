@@ -6,7 +6,7 @@ tracks locally running virtual machines and containers and the processes belongi
 
 This project produces a golang binary that can be used with Docker (with minor code changes).
 If you clone this branch and build/install `register-machine.go`, a binary will be placed in
-`/usr/lib/docker/hooks.d` named `oci-register-machine`. You can change this location by
+`/usr/libexec/oci/hooks.d` named `oci-register-machine`. You can change this location by
 editing `HOOKSDIR` in the Makefile.
 
 
@@ -18,10 +18,10 @@ These and other methods are described here:
 
 
 Running Docker containers with this executable, RegisterMachine() is called
-iust before a container is started and after it is provisioned.
+just before a container is started and after it is provisioned.
 All running containers' IDs will be listed when you run the command `machinectl` or `machinectl list`.
 When containers are stopped/exited, TerminateMachine() is called, all container processes are terminated
-and container ID is no longer listed in `machinectl` output.
+and the container ID is no longer listed in `machinectl` output.
 
 
 This doc assumes you are running at least docker version 1.9 with the dockerhooks patch.
