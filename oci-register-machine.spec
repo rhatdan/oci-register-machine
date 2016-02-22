@@ -27,12 +27,12 @@
 # https://github.com/projectatomic/oci-register-machine
 %global provider_prefix %{provider}.%{provider_tld}/%{project}/%{repo}
 %global import_path     %{provider_prefix}
-%global commit          fa3a554b805a70c7e3dab777c1b67bfa42be92c0
+%global commit          fb2a8b5f6c5f86b5fe2b60bdd1c6f13025702ea1
 %global shortcommit     %(c=%{commit}; echo ${c:0:7})
 
 Name:           oci-register-machine
 Version:        0
-Release:        0.1.git%{shortcommit}%{?dist}
+Release:        1.0.git%{shortcommit}%{?dist}
 Summary:        Golang binary to register OCI containers with systemd-machined
 License:        ASL 2.0
 URL:            https://%{provider_prefix}
