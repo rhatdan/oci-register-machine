@@ -78,7 +78,7 @@ func main() {
 		log.Fatalf("RegisterMachine Failed %v", err.Error())
 	}
 
-	log.Printf("Register machine: %s %d %s %s", command, state.ID, state.Pid, state.Root)
+	log.Printf("Register machine: %s %s %d %s", command, state.ID, state.Pid, state.Root)
 	// ensure id is a hex string at least 32 chars
 	passId, err := Validate(state.ID)
 	if err != nil {
