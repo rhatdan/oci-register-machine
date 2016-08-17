@@ -67,12 +67,38 @@ func TerminateMachine(name string) error {
 	return nil
 }
 
+const CONFIG = "/etc/oci-register-machine.conf"
+
+var settings struct {
+	Disabled bool `json:"disabled"`
+}
+
 func main() {
 	var state State
+
 	logwriter, err := syslog.New(syslog.LOG_NOTICE, "oci-register-machine")
 	if err == nil {
 		log.SetOutput(logwriter)
 	}
+	// then config file settings
+
+	configFile, err := os.Open(CONFIG)
+	defer configFile.Close()
+
+	if err != nil {
+		if !os.IsNotExist(err) {
+			log.Fatalf("RegisterMachine Failed to read %s %v", CONFIG, err.Error())
+		}
+	} else {
+		jsonParser := json.NewDecoder(configFile)
+		if err = jsonParser.Decode(&settings); err != nil {
+			log.Fatalf("RegisterMachine Failed parsing config file %s %v", CONFIG, err.Error())
+		}
+		if settings.Disabled {
+			return
+		}
+	}
+
 	command := os.Args[1]
 	if err := json.NewDecoder(os.Stdin).Decode(&state); err != nil {
 		log.Fatalf("RegisterMachine Failed %v", err.Error())
