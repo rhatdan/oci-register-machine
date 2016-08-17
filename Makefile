@@ -47,7 +47,7 @@ install: oci-register-machine oci-register-machine.1
 	install -m 755 oci-register-machine $(HOOKSINSTALLDIR)
 	install -d -m 755 $(PREFIX)/share/man/man1
 	install -m 644 oci-register-machine.1 $(PREFIX)/share/man/man1
-	install -m 644 oci-register-machine.conf $(DESTDIR)/etc/oci-register-machine.conf
+	install -D -m 644 oci-register-machine.conf $(DESTDIR)/etc/oci-register-machine.conf
 # Clean up
 #
 # Example:
