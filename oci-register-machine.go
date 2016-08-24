@@ -5,11 +5,13 @@ package main
 import (
 	"encoding/hex"
 	"encoding/json"
+	"io/ioutil"
 	"log"
 	"log/syslog"
 	"os"
 
 	"github.com/godbus/dbus"
+	"gopkg.in/yaml.v1"
 )
 
 var conn *dbus.Conn
@@ -70,7 +72,7 @@ func TerminateMachine(name string) error {
 const CONFIG = "/etc/oci-register-machine.conf"
 
 var settings struct {
-	Disabled bool `json:"disabled"`
+	Disabled bool `yaml:"disabled"`
 }
 
 func main() {
@@ -82,23 +84,19 @@ func main() {
 	}
 	// then config file settings
 
-	configFile, err := os.Open(CONFIG)
-	defer configFile.Close()
-
+	data, err := ioutil.ReadFile(CONFIG)
 	if err != nil {
 		if !os.IsNotExist(err) {
 			log.Fatalf("RegisterMachine Failed to read %s %v", CONFIG, err.Error())
 		}
 	} else {
-		jsonParser := json.NewDecoder(configFile)
-		if err = jsonParser.Decode(&settings); err != nil {
-			log.Fatalf("RegisterMachine Failed parsing config file %s %v", CONFIG, err.Error())
+		if err := yaml.Unmarshal(data, &settings); err != nil {
+			log.Fatalf("RegisterMachine Failed to parse %s %v", CONFIG, err.Error())
 		}
 		if settings.Disabled {
 			return
 		}
 	}
-
 	command := os.Args[1]
 	if err := json.NewDecoder(os.Stdin).Decode(&state); err != nil {
 		log.Fatalf("RegisterMachine Failed %v", err.Error())
