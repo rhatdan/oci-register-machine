@@ -72,7 +72,8 @@ func TerminateMachine(name string) error {
 const CONFIG = "/etc/oci-register-machine.conf"
 
 var settings struct {
-	Disabled bool `yaml:"disabled"`
+	Disabled   bool `yaml:"disabled"`
+	Permissive bool `yaml:"permissive"`
 }
 
 func main() {
@@ -113,14 +114,22 @@ func main() {
 	case "prestart":
 		{
 			if err = RegisterMachine(state.ID, passId, int(state.Pid), state.Root); err != nil {
-				log.Fatalf("Register machine failed: %v", err)
+				if settings.Permissive {
+					log.Printf("Register machine failed: %v", err)
+				} else {
+					log.Fatalf("Register machine failed: %v", err)
+				}
 			}
 			return
 		}
 	case "poststop":
 		{
 			if err := TerminateMachine(state.ID); err != nil {
-				log.Fatalf("TerminateMachine failed: %v", err)
+				if settings.Permissive {
+					log.Printf("TerminateMachine failed: %v", err)
+				} else {
+					log.Fatalf("TerminateMachine failed: %v", err)
+				}
 			}
 			return
 		}

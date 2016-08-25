@@ -16,8 +16,13 @@ as a hook, runc will execute the application after the container process is crea
 After starting an OCI container, the container will be listed with the `machinectl`.  The machine name will be the container ID.  Machinectl will then be able
 to manage the container. When container exits, the oci-register-machine will remove the instance from machinectl.
 
-You can disable this service by editing the /etc/oci-register-machine.conf
-file and setting the disabled field to true.
+## Config File
+
+**/etc/oci-register-machine.conf**
+
+Disable oci-register-machine by setting the `disabled` field to true.
+
+Setup service to not fail if it can not register a container by setting the `permissive` field to true.
 
 ## EXAMPLES
 
