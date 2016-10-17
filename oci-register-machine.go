@@ -9,6 +9,7 @@ import (
 	"log"
 	"log/syslog"
 	"os"
+	"strings"
 
 	"github.com/godbus/dbus"
 	"gopkg.in/yaml.v1"
@@ -66,7 +67,6 @@ func TerminateMachine(name string) error {
 	}
 	obj := conn.Object("org.freedesktop.machine1", "/org/freedesktop/machine1")
 	return obj.Call("org.freedesktop.machine1.Manager.TerminateMachine", 0, name).Err
-	return nil
 }
 
 const CONFIG = "/etc/oci-register-machine.conf"
@@ -120,7 +120,9 @@ func main() {
 	case "poststop":
 		{
 			if err := TerminateMachine(state.ID); err != nil {
-				log.Fatalf("TerminateMachine failed: %v", err)
+				if !strings.Contains(err.Error(), "No machine") {
+					log.Fatalf("TerminateMachine failed: %v", err)
+				}
 			}
 			return
 		}
