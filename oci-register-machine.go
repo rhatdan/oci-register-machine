@@ -97,9 +97,14 @@ func main() {
 			return
 		}
 	}
-	command := os.Args[1]
+
 	if err := json.NewDecoder(os.Stdin).Decode(&state); err != nil {
 		log.Fatalf("RegisterMachine Failed %v", err.Error())
+	}
+
+	command := map[bool]string{true: "prestart", false: "poststop"}[state.Pid > 0]
+	if len(os.Args) > 1 {
+		command = os.Args[1]
 	}
 
 	log.Printf("Register machine: %s %s %d %s", command, state.ID, state.Pid, state.Root)
