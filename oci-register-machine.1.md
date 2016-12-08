@@ -21,7 +21,7 @@ file and setting the disabled field to true.
 
 ## EXAMPLES
 
-	$ docker run --it busybox /bin/sh
+	$ docker run -it busybox /bin/sh
 
 	(In different terminal):
 	
