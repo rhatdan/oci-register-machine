@@ -10,6 +10,7 @@ import (
 	"log/syslog"
 	"os"
 	"strings"
+	"fmt"
 
 	"github.com/godbus/dbus"
 	"gopkg.in/yaml.v1"
@@ -18,10 +19,19 @@ import (
 var conn *dbus.Conn
 
 type State struct {
-	Version string `json:"version"`
-	ID      string `json:"id"`
-	Pid     int    `json:"pid"`
-	Root    string `json:"root"`
+	Version    string `json:"version"`
+	ID         string `json:"id"`
+	Pid        int    `json:"pid"`
+	Root       string `json:"root"`
+	BundlePath string `json:"bundlePath"`
+}
+
+type Process struct {
+	Env     []string       `json:"env"`
+}
+
+type Config struct {
+	Process    *Process `json:"process"`
 }
 
 func Validate(id string) (string, error) {
@@ -53,7 +63,11 @@ func RegisterMachine(name string, id string, pid int, root_directory string) err
 	if service == "" {
 		service = "runc"
 	}
-	return obj.Call("org.freedesktop.machine1.Manager.RegisterMachine", 0, name[0:32], av, service, "container", uint32(pid), root_directory).Err
+	if len(name) > 32 {
+		name = name[0:32]
+	}
+
+	return obj.Call("org.freedesktop.machine1.Manager.RegisterMachine", 0, name, av, service, "container", uint32(pid), root_directory).Err
 }
 
 // TerminateMachine registered with systemd on the host system
@@ -108,10 +122,32 @@ func main() {
 	}
 
 	log.Printf("Register machine: %s %s %d %s", command, state.ID, state.Pid, state.Root)
+	passId := state.ID
+	// If id is shorter than 32, then read container_uuid from the container process environment variables
+	if len(passId) < 32 && state.Pid > 0 {
+		var config Config
+		configFile := fmt.Sprintf("%s/config.json", state.BundlePath)
+		data, err := ioutil.ReadFile(configFile)
+		if err != nil {
+			log.Fatalf("RegisterMachine Failed to read %s %v", configFile, err.Error())
+		}
+		if err := yaml.Unmarshal(data, &config); err != nil {
+			log.Fatalf("RegisterMachine Failed to parse %s %v", configFile, err.Error())
+		}
+		for _, env := range config.Process.Env {
+			const PREFIX = "container_uuid="
+			if strings.HasPrefix(env, PREFIX) {
+				passId = strings.Replace(env[len(PREFIX):], "-", "", -1)
+				break
+			}
+		}
+	}
 	// ensure id is a hex string at least 32 chars
-	passId, err := Validate(state.ID)
-	if err != nil {
-		log.Fatalf("RegisterMachine Failed %v", err.Error())
+	if len(passId) < 32 {
+		passId, err = Validate(passId)
+		if err != nil {
+			log.Fatalf("RegisterMachine Failed %v", err.Error())
+		}
 	}
 
 	switch command {
