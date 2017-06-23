@@ -5,12 +5,12 @@ package main
 import (
 	"encoding/hex"
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"log/syslog"
 	"os"
 	"strings"
-	"fmt"
 
 	"github.com/godbus/dbus"
 	"gopkg.in/yaml.v1"
@@ -27,11 +27,11 @@ type State struct {
 }
 
 type Process struct {
-	Env     []string       `json:"env"`
+	Env []string `json:"env"`
 }
 
 type Config struct {
-	Process    *Process `json:"process"`
+	Process *Process `json:"process"`
 }
 
 func Validate(id string) (string, error) {
@@ -79,6 +79,10 @@ func TerminateMachine(name string) error {
 			return err
 		}
 	}
+	if len(name) > 32 {
+		name = name[0:32]
+	}
+
 	obj := conn.Object("org.freedesktop.machine1", "/org/freedesktop/machine1")
 	return obj.Call("org.freedesktop.machine1.Manager.TerminateMachine", 0, name).Err
 }
@@ -143,11 +147,9 @@ func main() {
 		}
 	}
 	// ensure id is a hex string at least 32 chars
-	if len(passId) < 32 {
-		passId, err = Validate(passId)
-		if err != nil {
-			log.Fatalf("RegisterMachine Failed %v", err.Error())
-		}
+	passId, err = Validate(passId)
+	if err != nil {
+		log.Fatalf("RegisterMachine Failed %v", err.Error())
 	}
 
 	switch command {
