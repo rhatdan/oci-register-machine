@@ -5,8 +5,8 @@
 	"Deps": [
 		{
 			"ImportPath": "github.com/godbus/dbus",
-			"Comment": "v4.0.0-8-g58b0385",
-			"Rev": "58b0385796c5b97c6934388174215143cbd111bf"
+			"Comment": "v4.0.0-39-g3725288",
+			"Rev": "37252881b3a87eaa2eb04b0ff2211f54f45199ab"
 		},
 		{
 			"ImportPath": "gopkg.in/yaml.v1",
