@@ -154,6 +154,8 @@ export GOPATH=%{buildroot}/%{gopath}:$(pwd)/Godeps/_workspace:%{gopath}
 %dir /%{_libexecdir}/oci/hooks.d
 /%{_libexecdir}/oci/hooks.d/oci-register-machine
 %{_mandir}/man1/oci-register-machine.1*
+%dir %{_usr}/share/containers/oci/hooks.d
+%{_usr}/share/containers/oci/hooks.d/oci-register-machine.json
 
 %if 0%{?with_devel}
 %files devel -f devel.file-list

@@ -14,6 +14,8 @@ all: build docs
 PREFIX ?= $(DESTDIR)/usr
 HOOKSDIR=/usr/libexec/oci/hooks.d
 HOOKSINSTALLDIR=$(DESTDIR)$(HOOKSDIR)
+HOOKSJSONDIR=${DESTDIR}/usr/share/containers/oci/hooks.d
+
 # need this substitution to get build ID note
 GOBUILD=go build -a -ldflags "${LDFLAGS:-} -B 0x$(shell head -c20 /dev/urandom|od -An -tx1|tr -d ' \n')"
 
@@ -48,6 +50,8 @@ install: oci-register-machine oci-register-machine.1
 	install -d -m 755 $(PREFIX)/share/man/man1
 	install -m 644 oci-register-machine.1 $(PREFIX)/share/man/man1
 	install -D -m 644 oci-register-machine.conf $(DESTDIR)/etc/oci-register-machine.conf
+	install -d -m 755 $(HOOKSJSONDIR)
+	install -m 644 oci-register-machine.json $(HOOKSJSONDIR)
 # Clean up
 #
 # Example:
