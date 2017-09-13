@@ -23,6 +23,7 @@ type State struct {
 	ID         string `json:"id"`
 	Pid        int    `json:"pid"`
 	Root       string `json:"root"`
+	Bundle     string `json:"bundle"`
 	BundlePath string `json:"bundlePath"`
 }
 
@@ -130,7 +131,13 @@ func main() {
 	// If id is shorter than 32, then read container_uuid from the container process environment variables
 	if len(passId) < 32 && state.Pid > 0 {
 		var config Config
-		configFile := fmt.Sprintf("%s/config.json", state.BundlePath)
+		var bundle string
+		if state.Bundle != "" {
+			bundle = state.Bundle
+		} else {
+			bundle = state.BundlePath
+		}
+		configFile := fmt.Sprintf("%s/config.json", bundle)
 		data, err := ioutil.ReadFile(configFile)
 		if err != nil {
 			log.Fatalf("RegisterMachine Failed to read %s %m", configFile)
