@@ -1,5 +1,5 @@
 {
     "cmd": [".*/init$" , ".*/systemd$" ],
     "hook": "/usr/libexec/oci/hooks.d/oci-register-machine",
-    "stages": [ "prestart", "poststop" ]
+    "stage": [ "prestart", "poststop" ]
 }
