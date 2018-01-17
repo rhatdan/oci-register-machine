@@ -121,12 +121,16 @@ func main() {
 		log.Fatalf("RegisterMachine Failed %m")
 	}
 
-	command := map[bool]string{true: "prestart", false: "poststop"}[state.Pid > 0]
-	if len(os.Args) > 1 {
-		command = os.Args[1]
+	stage := map[bool]string{true: "prestart", false: "poststop"}[state.Pid > 0]
+	if env, ok := os.LookupEnv("stage"); ok {
+		stage = env
+	} else {
+		if len(os.Args) > 1 {
+			stage = os.Args[1]
+		}
 	}
 
-	log.Printf("Register machine: %s %s %d %s", command, state.ID, state.Pid, state.Root)
+	log.Printf("Register machine: %s %s %d %s", stage, state.ID, state.Pid, state.Root)
 	passId := state.ID
 	// If id is shorter than 32, then read container_uuid from the container process environment variables
 	if len(passId) < 32 && state.Pid > 0 {
@@ -159,7 +163,7 @@ func main() {
 		log.Fatalf("RegisterMachine Failed %m")
 	}
 
-	switch command {
+	switch stage {
 	case "prestart":
 		{
 			if err = RegisterMachine(state.ID, passId, int(state.Pid), state.Root); err != nil {
@@ -176,6 +180,6 @@ func main() {
 			}
 			return
 		}
-		log.Fatalf("Invalid command %q must be prestart|poststop", command)
+		log.Printf("Does not support the %q stage must be prestart|poststop", stage)
 	}
 }
